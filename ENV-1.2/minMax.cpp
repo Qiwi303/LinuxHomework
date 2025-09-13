@@ -1,12 +1,11 @@
 #include<iostream>
-
+#include<string>
 int main(int argc, char* argv[]){
-
-	int min = *(argv[1]) - '0';
-	int max = *(argv[1]) - '0';
+	int min = std::stoi(argv[1]);
+	int max = std::stoi(argv[1]);
 
 	for(int i = 2; i < argc; ++i){
-		int x = *(argv[i]) - '0';
+		int x = std::stoi(argv[i]);
 		if(x < min) min = x;
 		if(x > max) max = x;
 	}
