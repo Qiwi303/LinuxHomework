@@ -1,6 +1,12 @@
 #include<iostream>
 #include<string>
 int main(int argc, char* argv[]){
+
+	if(argc != 4){
+		std::cout<<"invalid number of arguments"<<std::endl;
+		return 1;
+	}
+
 	int min = std::stoi(argv[1]);
 	int max = std::stoi(argv[1]);
 
