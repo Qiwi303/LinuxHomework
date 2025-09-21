@@ -15,8 +15,12 @@ public:
 	
 	ComplexNumbers operator*(const double num);
 
-	double getAbsoluteValue(){
+	double getAbsoluteValue() const {
 		return sqrt(re*re + im*im);
+	}
+
+	bool operator>(const ComplexNumbers& other){
+		return this->getAbsoluteValue() > other.getAbsoluteValue(); 
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const ComplexNumbers& other){
