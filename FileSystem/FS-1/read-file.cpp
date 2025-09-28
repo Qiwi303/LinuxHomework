@@ -9,12 +9,11 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	
-	const int PAGE_SIZE = 4095;
+	const int PAGE_SIZE = 4096;
+	int readSize; 
 
 	std::string buf;
 	buf.resize(PAGE_SIZE);
-	
-	int readSize;
 
 	while((readSize = read(fd, buf.data(), buf.size())) > 0){
 		if(write(1, buf.data(), readSize) == -1){
@@ -28,7 +27,7 @@ int main(int argc, char** argv){
 
 	if(readSize < 0){
 		perror("read");
-		return -1;
+		return 1;
 	}
 		
 	return 0;

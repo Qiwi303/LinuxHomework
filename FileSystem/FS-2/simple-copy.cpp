@@ -10,14 +10,13 @@ int main(int argc, char** argv){
 	}
 
 	int fd1 = open(argv[1], O_RDONLY);
-	if(fd1 == -1){
+	int fd2 = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if(fd1 == -1 || fd2 == -1){
 	       	perror("open");
 		return 1;
 	}
 
-	int fd2 = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
-
-	const int PAGE_SIZE = 4095;
+	const int PAGE_SIZE = 4096;
 	int readSize;
 
 	std::string buf;
@@ -37,7 +36,7 @@ int main(int argc, char** argv){
 
 	if(readSize < 0){
 		perror("read");
-		return -1;
+		return 1;
 	}
 		
 	return 0;
