@@ -1,0 +1,122 @@
+#include<iostream>
+#include<unistd.h>
+#include<fcntl.h>
+#include<vector>
+
+void bubbleSort(std::vector<std::vector<char>>& lines){
+	for(int i = 0; i < lines.size(); ++i){
+		for(int j = 0; j < lines.size() - i - 1; ++j){
+			if(lines[j] > lines[j+1]){
+				std::swap(lines[j], lines[j+1]);
+			}
+		}
+	}
+}
+
+
+void printVec(const std::vector<std::vector<char>>& lines){
+	for(auto x: lines){
+		for(char y:x){
+			std::cout<<y;
+		}
+	}
+	std::cout<<std::endl;
+}
+
+int main(int argc, char** argv){
+
+	int fd = open(argv[1], O_RDONLY);
+	if(fd == -1){
+	       	perror("open");
+		return 1;
+	}
+	
+	const int BUFFER_SIZE = 8192;
+	int readSize; 
+
+	std::string buf;
+	buf.resize(BUFFER_SIZE);
+
+	int chunk_counter = 1;
+	int sorted_chunk_counter = 0;	
+
+	while(true){	
+	readSize = read (fd, buf.data(), BUFFER_SIZE);
+	if(readSize == -1){
+		perror("read");
+		return 1;
+	}
+	
+	if(readSize == 0) {
+		break;
+	}
+
+	int last_newline_pos = -1;
+        for(int i = readSize - 1; i >= 0; i--){
+            if(buf[i] == '\n'){
+                last_newline_pos = i;
+                break;
+            }
+        }
+        
+        if(last_newline_pos == -1){
+            std::cerr << "Warning: No newline found in chunk, skipping..." << std::endl;
+            continue;
+        }
+        
+        int bytes_to_rewind = readSize - last_newline_pos - 1;
+        if(bytes_to_rewind > 0){
+            if(lseek(fd, -bytes_to_rewind, SEEK_CUR) == -1){
+                perror("lseek");
+                close(fd);
+                return 1;
+            }
+        }
+
+	std::vector<std::vector<char>> lines;
+	std::vector<char> line;
+	for(int j = 0; j < last_newline_pos; j++){
+		line.push_back(buf[j]);
+		if( int(buf[j]) == int('\n')){
+			lines.push_back(line);
+			line.clear();		
+		}
+	}
+	
+	printVec(lines);
+	bubbleSort(lines);
+	printVec(lines);
+	
+	
+	char filename[50];
+
+	sprintf(filename, "chunk_%04d.tmp", chunk_counter);
+	
+	int fdTMP = open(filename, O_WRONLY | O_CREAT | O_EXCL, 0600);
+
+	if(fdTMP == -1){
+		perror("open");
+		return 1;
+	}
+	
+	int e;
+
+	for(auto l: lines) {
+		write(fdTMP, l.data(), l.size());
+	}	
+
+	close(fdTMP);
+	chunk_counter++;
+	}
+
+	
+	close(fd);
+
+	if(readSize < 0){
+		perror("read");
+		return 1;
+	}
+		
+	return 0;
+}
+	
