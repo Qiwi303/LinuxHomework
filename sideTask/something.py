@@ -15,5 +15,5 @@ with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
     while total_bytes < TARGET_SIZE_BYTES:
         line = random_line()
         f.write(line)
-        total_bytes += len(line.encode('utf-8'))  # точный размер в байтах
+        total_bytes += len(line.encode('utf-8'))
 
