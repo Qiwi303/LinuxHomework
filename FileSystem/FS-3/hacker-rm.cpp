@@ -9,27 +9,26 @@
 void removeFileData(const int fd, int size){
         char buf[BUFFSIZE] = {'\0'};
 	int written;
-        while(true){
+        while(size > 0){
 		if(size >= BUFFSIZE){
 			written = write(fd, buf, BUFFSIZE);
 		}
 		else{
 			written = write(fd, buf, size);
-			size = 0;
-		}	break;
+		}
 
                 if(written == -1){
-                std::cerr<<"failed to write"<<std::endl;
+                	std::cerr<<"failed to write"<<std::endl;
                         exit(1);
                 }
 
                 size-=BUFFSIZE;
         }
-	int check = ftruncate(fd, 0);
-	if(check == -1){
-		std::cerr<<"failed to ftruncate"<<std::endl;
-		exit(1);
-	}
+	//int check = ftruncate(fd, 0);
+	//if(check == -1){
+	//	std::cerr<<"failed to ftruncate"<<std::endl;
+	//	exit(1);
+	//}
 
 }
 
@@ -65,7 +64,8 @@ int main(int argc, char** argv){
         int size = info.st_size;
 
         if(size == 0){
-                if(close(fd) == -1){
+		int closed = close(fd);
+                if(closed == -1){
                         std::cerr<<"failed to close file"<<std::endl;
                         exit(1);
                 }
@@ -85,11 +85,11 @@ int main(int argc, char** argv){
                 std::cerr<<"failed to close"<<std::endl;
         }
 
-        //int unlinked = unlink(argv[1]);
-        //if(unlinked == -1){
-        //      std::cerr<<"failed to unlink"<<std::endl;
-        //      exit(1);
-        //}
+        int unlinked = unlink(argv[1]);
+        if(unlinked == -1){
+             std::cerr<<"failed to unlink"<<std::endl;
+              exit(1);
+        }
 
         return 0;
 }
