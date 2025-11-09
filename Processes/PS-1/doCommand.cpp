@@ -69,6 +69,11 @@ void do_command(char** x){
 }	
 
 int main(int argc, char** argv) {
+    if(argc < 2){
+	std::cerr<<"Invalid input"<<std::endl;
+	exit(1);
+    }	    
+
     char** argv1 = new char*[argc + 1]; 
     copy(argv, argv1, argc);
 
