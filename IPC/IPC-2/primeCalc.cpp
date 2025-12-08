@@ -1,10 +1,12 @@
 #include <iostream>
 #include <unistd.h>
-#include <fcntl.h>
-#include <cerrno>
 #include <sys/wait.h>
 
 bool checkIfPrime(const int num){
+	if(num < 2){
+		return false;
+	}
+	
 	if(num == 2){
 		return true;
 	}
@@ -37,11 +39,13 @@ int main(){
 	int check = pipe(parentToChild);
 	if(check < 0){
 		std::cerr<<"Failed to pipe \n";
+		exit(1);
 	}
 		
 	check = pipe(childToParent);
 	if(check < 0){
 		std::cerr<<"Failed to pipe \n";
+		exit(1);
 	}
 	
 	pid_t pid = fork();
@@ -79,6 +83,19 @@ int main(){
 					exit(1);
 				}
 				wait(nullptr);
+				
+				check = close(parentToChild[1]);
+				if(check < 0){
+					std::cerr<<"Failed to close \n";
+					exit(1);
+				}
+				
+				check = close(childToParent[0]);
+				if(check < 0){
+					std::cerr<<"Failed to close \n";
+					exit(1);
+				}
+
 				exit(0);
 			}
 
@@ -135,6 +152,16 @@ int main(){
 			}
 		
 			if(num == -1){
+				check = close(parentToChild[0]);
+				if(check < 0){
+					std::cerr<<"Failed to close \n";
+					exit(1);
+				}
+				check = close(childToParent[1]);
+				if(check < 0){
+					std::cerr<<"Failed to close \n";
+					exit(1);
+				}
 				exit(0);
 			}
 
