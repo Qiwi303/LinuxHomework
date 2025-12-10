@@ -1,0 +1,4 @@
+/home/Ars/Desktop/LinuxHomework/IPC/IPC-3/build/CMakeFiles/first.dir
+/home/Ars/Desktop/LinuxHomework/IPC/IPC-3/build/CMakeFiles/second.dir
+/home/Ars/Desktop/LinuxHomework/IPC/IPC-3/build/CMakeFiles/edit_cache.dir
+/home/Ars/Desktop/LinuxHomework/IPC/IPC-3/build/CMakeFiles/rebuild_cache.dir
