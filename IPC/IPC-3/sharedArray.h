@@ -10,9 +10,12 @@
 class sharedArray{
 public:
 	sharedArray(const size_t _size, const std::string name);
+	sharedArray(sharedArray&& other) noexcept;
 	int& operator[](int i);
+	void unlink();
 	~sharedArray();
 	
+
 
 	sharedArray(const sharedArray&) = delete;
 	sharedArray& operator=(const sharedArray&) = delete;

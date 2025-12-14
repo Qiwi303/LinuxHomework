@@ -1,5 +1,17 @@
 #include "sharedArray.h"
 
+sharedArray::sharedArray(sharedArray&& other) noexcept:
+		name(std::move(other.name)),
+		size(other.size),
+		fd(other.fd),
+		arr(other.arr) {
+		
+		other.size = 0;
+		other.fd = -1;
+		other.arr = nullptr;
+		other.name.clear();
+			
+}
 
 sharedArray::sharedArray(const size_t _size, const std::string name_): size(_size), name(name_){
 	//резервируем последнее места для передачи индекса в другой процесс
@@ -63,14 +75,29 @@ sharedArray::sharedArray(const size_t _size, const std::string name_): size(_siz
 }
 
 int& sharedArray::operator[](int i){
+	if(i < 0 ||  i > size - 1){
+		throw std::invalid_argument("enter a correct index");
+	}
 	return *(arr + i);
 }
 
 sharedArray::~sharedArray(){
-	munmap(arr, size * sizeof(int));
-	int check = close(fd);
-
-	if(check == -1){
-		std::cerr<<"failed to close"<<std::endl;
+	if(arr != nullptr){
+		munmap(arr, size * sizeof(int));
+	}
+	
+	if(fd != -1){	
+		int check = close(fd);
+		if(check == -1){
+			std::cerr<<"failed to close"<<std::endl;
+		}
 	}
 }
+
+void sharedArray::unlink(){
+	int check = shm_unlink(name.c_str());
+	if(check == -1 && errno != ENOENT){
+		throw std::runtime_error("Failed to unlink");
+	}
+}
+

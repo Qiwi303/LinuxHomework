@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/second.dir/second.cpp.o CMakeFiles/second.dir/sharedArray.cpp.o -o second  -lpthread 
